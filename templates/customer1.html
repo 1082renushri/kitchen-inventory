@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Order Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .header {
+            background-color: #34495e;
+            padding: 10px;
+            text-align: center;
+            color: white;
+        }
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .search-bar input {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+        }
+        .card {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 15px;
+            width: 200px;
+            text-align: center;
+            position: relative;
+        }
+        .card h3 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .card p {
+            font-size: 16px;
+            color: #555;
+        }
+        .card input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .card button {
+            background-color: #34495e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .card button:hover {
+            background-color: #2c3e50;
+        }
+        .card .order-button {
+            background-color: #2ecc71; /* Green */
+        }
+        .card .order-button:hover {
+            background-color: #27ae60;
+        }
+        .card .cancel-button {
+            background-color: #e74c3c; /* Red */
+            display: none;
+        }
+        .card .cancel-button:hover {
+            background-color: #c0392b;
+        }
+        .highlight {
+            background-color: #ecf0f1;
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .hidden {
+            display: none;
+        }
+        .success-message {
+            color: green;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Product Order Page</h1>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search Products..." onkeyup="searchProducts()">
+        </div>
+    </div>
+
+    <div class="container" id="productContainer">
+        {% for item in inventory %}
+        <div class="card" id="card-{{ item[0] }}">
+            <h3>{{ item[1] }}</h3>
+            <p>Price: ₹{{ item[4] }}</p>
+            <p>Available Stock: {{ item[2] }}</p>
+            <input type="number" id="quantity-{{ item[0] }}" placeholder="Quantity" min="1" max="{{ item[2] }}" 
+                   data-item-id="{{ item[0] }}" data-price="{{ item[4] }}" data-max="{{ item[2] }}">
+            <p>Total Price: ₹<span id="total-price-{{ item[0] }}" class="highlight">0</span></p>
+            <button class="order-button" data-item-id="{{ item[0] }}">Place Order</button>
+            <button class="cancel-button" data-item-id="{{ item[0] }}" data-quantity="0">Cancel Order</button>
+            <span id="message-{{ item[0] }}" class="success-message"></span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function updateTotalPrice(itemId, pricePerUnit, maxQuantity) {
+            const quantityInput = document.getElementById('quantity-' + itemId);
+            const totalPriceElement = document.getElementById('total-price-' + itemId);
+            let quantity = parseInt(quantityInput.value);
+
+            if (isNaN(quantity) || quantity < 1) {
+                quantity = 1;
+                quantityInput.value = quantity;
+            } else if (quantity > maxQuantity) {
+                quantity = maxQuantity;
+                quantityInput.value = quantity;
+            }
+
+            const totalPrice = quantity * pricePerUnit;
+            totalPriceElement.textContent = totalPrice;
+        }
+
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                const itemId = this.getAttribute('data-item-id');
+                const pricePerUnit = parseFloat(this.getAttribute('data-price'));
+                const maxQuantity = parseInt(this.getAttribute('data-max'));
+                updateTotalPrice(itemId, pricePerUnit, maxQuantity);
+            });
+        });
+
+        document.querySelectorAll('.order-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-item-id');
+                const quantityInput = document.getElementById('quantity-' + itemId);
+                let quantity = quantityInput.value.trim();
+
+                if (quantity === "" || quantity < 1) {
+                    quantity = 1;
+                    quantityInput.value = quantity;
+                }
+
+                fetch('/place_order/' + itemId, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ item_id: itemId, quantity: quantity }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const messageElement = document.getElementById('message-' + itemId);
+                    const cancelButton = document.querySelector('#card-' + itemId + ' .cancel-button');
+
+                    if (data.success) {
+                        messageElement.textContent = data.message;
+                        messageElement.classList.add('success-message');
+                        cancelButton.style.display = 'block';
+                    } else {
+                        messageElement.textContent = data.message;
+                        messageElement.classList.add('error-message');
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('message-' + itemId).textContent = 'Error placing order.';
+                });
+            });
+        });
+
+        document.querySelectorAll('.cancel-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-item-id');
+                document.getElementById('quantity-' + itemId).value = "";
+                this.style.display = 'none';
+
+                fetch('/cancel_order/' + itemId, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ item_id: itemId, quantity: 0 }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const messageElement = document.getElementById('message-' + itemId);
+                    if (data.success) {
+                        messageElement.textContent = 'Order canceled.';
+                    } else {
+                        messageElement.textContent = data.message;
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('message-' + itemId).textContent = 'Error canceling order.';
+                });
+            });
+        });
+
+        function searchProducts() {
+            const searchQuery = document.getElementById("searchInput").value.toLowerCase();
+            const cards = document.querySelectorAll(".card");
+
+            cards.forEach(card => {
+                const productName = card.querySelector("h3").textContent.toLowerCase();
+                card.style.display = productName.includes(searchQuery) ? "block" : "none";
+            });
+        }
+    </script>
+</body>
+</html>

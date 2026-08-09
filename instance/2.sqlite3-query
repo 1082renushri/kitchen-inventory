@@ -1,0 +1,6 @@
+-- database: ./inventory.db
+
+UPDATE inventory SET last_updated = datetime('now');
+
+
+

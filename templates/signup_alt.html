@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <style>
+        /* Reset and box-sizing */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #5a6f80, #a6c9d8); /* Gradient from #5a6f80 to light blue */
+            background-size: 400% 400%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: gradientAnimation 10s ease infinite; /* Smooth animated gradient */
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8); /* Slightly dull background for container */
+            backdrop-filter: blur(20px); /* Stronger blur effect */
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3); /* Shadow at corners */
+            text-align: center;
+            position: relative;
+        }
+
+        /* Logo Styling - Simple person symbol */
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin-bottom: -30px; /* Position the logo to intersect the top line */
+            border-radius: 50%;
+            background-color: #5a6f80; /* Elegant blue color */
+            color: white;
+            font-size: 32px;
+            line-height: 60px;
+            text-align: center;
+            border: 2px solid #fff; /* White border around the logo */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Elegant shadow for logo */
+            position: absolute;
+            top: -30px; /* Positioned at the top center of the container */
+            left: 50%;
+            transform: translateX(-50%); /* Center the logo horizontally */
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            font-size: 14px;
+            color: #222; /* Darker color for labels */
+            margin-bottom: 8px;
+            display: block;
+            font-weight: bold; /* Bold text */
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            margin-top: 8px;
+            transition: border-color 0.3s ease;
+            color: #333; /* Dark text inside input */
+        }
+
+        input:focus {
+            border-color: #6e7e8a;
+            outline: none;
+            background-color: #fff;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #5a6f80; /* Lighter muted blue button */
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4b5e72; /* Slightly darker shade of muted blue */
+        }
+
+        .signup-link {
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        .signup-link a {
+            color: #5a6f80;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Style for error message */
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <span>👤</span> <!-- Simple person symbol -->
+        </div>
+        <h1>Create an Account</h1>
+
+        <form method="POST" action="{{ url_for('signup') }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                {% if error_message %}
+                    <div class="error-message">{{ error_message }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                {% if password_message %}
+                    <div class="error-message">{{ password_message }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="phonenumber">Phone Number</label>
+                <input type="tel" id="phonenumber" name="phonenumber" placeholder="Enter your phone number" required>
+                {% if phone_message %}
+                    <div class="error-message">{{ phone_message }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit">Sign Up</button>
+
+            <p class="signup-link">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+        </form>
+    </div>
+</body>
+</html>

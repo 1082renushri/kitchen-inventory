@@ -1,0 +1,7 @@
+-- database: ./inventory.db
+
+UPDATE inventory 
+SET quantity = quantity + 4, 
+    last_updated = datetime('now', 'localtime') 
+WHERE item_name = 'cumin seeds';
+

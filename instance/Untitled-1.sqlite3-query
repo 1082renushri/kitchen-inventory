@@ -1,0 +1,6 @@
+-- database: ./inventory.db
+
+ALTER TABLE inventory ADD COLUMN last_updated TEXT;
+
+
+

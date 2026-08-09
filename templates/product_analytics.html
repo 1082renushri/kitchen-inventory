@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Analytics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #34495e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .back-arrow {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 24px;
+            text-decoration: none;
+        }
+
+        .back-arrow:hover {
+            color: #ecf0f1;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .graph-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+
+        .table-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h2 {
+            color: #34495e;
+            font-size: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #34495e;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="{{ url_for('index3') }}" class="back-arrow">&#8592;</a> <!-- Back arrow to index3 -->
+        <h1>Product Analytics for {{ product_name }}</h1>
+    </div>
+
+    <div class="content">
+        <!-- Graph Section -->
+        <div class="graph-container">
+            <h2>Order Quantity Over Time</h2>
+            {{ graph_html | safe }}
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-container">
+            <h2>Order Data</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order Time</th>
+                        <th>Order Date</th>
+                        <th>Quantity</th>
+                        <th>Username</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in order_data %}
+                    <tr>
+                        <td>{{ order[0] }}</td> <!-- Order Time -->
+                        <td>{{ order[1] }}</td> <!-- Order Date -->
+                        <td>{{ order[2] }}</td> <!-- Quantity -->
+                        <td>{{ order[3] }}</td> <!-- Username -->
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" style="text-align:center;">No order data available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,3 @@
+-- database: ./inventory.db
+
+DROP TABLE IF EXISTS supplier;

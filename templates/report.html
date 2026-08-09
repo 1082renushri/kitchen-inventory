@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #34495e;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        ul {
+            margin: 10px 0;
+        }
+        li {
+            font-size: 14px;
+            margin-left: 20px;
+        }
+        .summary {
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #34495e;
+            color: white;
+        }
+        td {
+            background-color: #ecf0f1;
+        }
+        .notification {
+            background-color: #f39c12;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 16px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Inventory Report</h2>
+
+    <!-- Summary Section -->
+    <h3>1. Notifications:</h3>
+    <p class="summary">{{ summary }}</p>
+
+    <!-- Inventory Details Section -->
+    <h3>2. Inventory Details:</h3>
+    <div class="inventory">
+        {% for item in inventory_details %}
+            <h4>{{ item['Item Name'] }}</h4>
+            <ul>
+                <li><strong>Quantity:</strong> {{ item['Quantity'] }}</li>
+                <li><strong>Threshold:</strong> {{ item['Threshold'] }}</li>
+                <li><strong>Stock Status:</strong> {{ item['Stock Status'] }}</li>
+                <li><strong>Predicted Sales:</strong> {{ item['Predicted Sales'] }}</li>
+                <li><strong>Supplier:</strong> {{ item['Supplier'] }}</li>
+                <li><strong>Supplier Quantity:</strong> {{ item['Supplier Quantity'] }}</li>
+                <li><strong>Last Updated:</strong> {{ item['Last Updated'] }}</li>
+            </ul>
+            <hr>
+        {% endfor %}
+    </div>
+
+    <!-- Notifications Section -->
+    <h3>3. Notifications Summary:</h3>
+    <div class="notification">
+        <p>{{ full_report }}</p>
+    </div>
+
+    <!-- Link to Download PDF -->
+    <div>
+        <a href="{{ url_for('generate_pdf') }}" class="btn btn-primary" target="_blank">
+            Download PDF Report
+        </a>
+    </div>
+</div>
+
+</body>
+</html>
+

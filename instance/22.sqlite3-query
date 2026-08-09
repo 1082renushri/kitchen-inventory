@@ -1,0 +1,6 @@
+-- database: ./users.db
+
+UPDATE user
+SET password = 'swetha@123'
+WHERE username = 'swetha';
+
